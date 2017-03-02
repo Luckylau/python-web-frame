@@ -76,9 +76,20 @@ class UserController(rest.RestController):
     """
     @expose.expose(User, body=User)
     def put(self, user):
+        logger.info("v1 UserController Put Method is called ...")
         user_info = {
             'id': user.id,
             'name': user.name,
             'age': user.age + 1
         }
         return User(**user_info)
+
+    """
+    test eg:
+         curl -X DELETE http://localhost:8080/v1/users/abc
+    """
+
+    @expose.expose()
+    def delete(self):
+        logger.info("v1 UserController Delete Method is called ...")
+        print('Delete user_id: %s' % self.user_id)
