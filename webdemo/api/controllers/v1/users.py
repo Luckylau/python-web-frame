@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class User(wtypes.Base):
-    id=wtypes.text
+    id = wtypes.text
     name = wtypes.text
     age = int
 
@@ -70,3 +70,15 @@ class UserController(rest.RestController):
         }
         return User(**user_info)
 
+    """
+    test eg:
+         curl -X PUT http://localhost:8080/v1/users/abc -H "Content-Type: application/json" -d '{"name": "Cook", "age":50}'
+    """
+    @expose.expose(User, body=User)
+    def put(self, user):
+        user_info = {
+            'id': user.id,
+            'name': user.name,
+            'age': user.age + 1
+        }
+        return User(**user_info)
