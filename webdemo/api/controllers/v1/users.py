@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+#-*- coding: utf-8 -*-
 from pecan import rest
 from wsme import types as wtypes
 import logging
@@ -15,6 +17,17 @@ class Users(wtypes.Base):
 
 
 class UsersController(rest.RestController):
+
+    '''
+       None 表示这个方法没有返回值
+       status_code 表示这个API的响应状态码是201
+       test eg:
+       curl -X POST http://localhost:8080/v1/users -H "Content-Type: application/json" -d '{"name": "Cook", "age": 50}' -v
+
+    '''
+    @expose.expose(None, body=User, status_code=201)
+    def post(self, user):
+        print user
 
     @expose.expose(Users)
     def get(self):
