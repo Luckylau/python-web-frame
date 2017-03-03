@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+#-*- coding: utf-8 -*-
 from sqlalchemy import create_engine
 import logging
 from webdemo.db import models as db_models
@@ -68,15 +70,15 @@ class Connection(object):
             session = get_session()
             session.query(
                 db_models.db_User).filter_by(
-                user_id=user.user_id).update({"name":user.name,
-                                              "gender":user.gender,
-                                              "age":user.age,
-                                              "email":user.email
-            })
+                user_id=user.user_id).update({"name": user.name,
+                                              "gender": user.gender,
+                                              "age": user.age,
+                                              "email": user.email
+                                              })
             session.flush()
             session.commit()
         except exc.NoResultFound:
-            logger.error("query all user occur error ...")
+            logger.error("update user occur error ...")
 
         return user
 

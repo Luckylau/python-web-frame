@@ -59,7 +59,7 @@ class UsersController(rest.RestController):
         for user in users:
             u = Person()
             u.user_id = user.user_id
-            u.age=user.age
+            u.age = user.age
             u.email = user.email
             u.name = user.name
             users_list.append(u)
@@ -104,8 +104,8 @@ class UserController(rest.RestController):
             person.user_id = user.user_id
             person.email = user.email
             person.name = user.name
-            person.age=user.age
-            person.gender=user.gender
+            person.age = user.age
+            person.gender = user.gender
             return person
 
     """
@@ -133,10 +133,9 @@ class UserController(rest.RestController):
         person.gender = user.gender
         return person
 
-
     """
     test eg:
-         curl -X DELETE http://localhost:8080/v1/users/abc
+         curl -X DELETE http://localhost:8080/v1/users/123
     """
 
     @expose.expose()
