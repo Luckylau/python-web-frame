@@ -5,8 +5,9 @@ from webdemo.api.controllers.v1 import users as v1_users
 import logging
 logger = logging.getLogger(__name__)
 
+
 class v1Controller(rest.RestController):
-    users=v1_users.UsersController()
+    users = v1_users.UsersController()
 
     @expose.expose(wtypes.text)
     def get(self):

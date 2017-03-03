@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 import logging
 from webdemo.db import models as db_models
 import sqlalchemy.orm
+from sqlalchemy.orm import exc
 logger = logging.getLogger(__name__)
 Domain = "sqlalchemy"
 
@@ -14,8 +15,11 @@ def get_engine():
     global _ENGINE
     if _ENGINE is not None:
         return _ENGINE
-    _ENGINE = create_engine('sqlite://')
-    db_models.Base.metadata.create_all(_ENGINE)
+    _ENGINE = create_engine(
+        "mysql+mysqldb://root:root123@10.0.38.237:3306/test?charset=utf8",
+        echo=True)
+    db_models.int_dbs(_ENGINE)
+    return _ENGINE
 
 
 def get_session_maker(engine):
@@ -38,20 +42,24 @@ class Connection(object):
     def __init__(self):
         pass
 
-    def get_user(self,user_id):
-        query = get_session().query(db_models.User).filter_by(user_id=user_id)
+    def get_user(self, user_id):
+        user = None
+        query = get_session().query(
+            db_models.db_User).filter_by(
+            user_id=user_id)
         try:
             user = query.one()
-        except Exception ,e:
-            print("query error"+e.message)
+        except exc.NoResultFound:
+            logger.error("query by user_id not found ...")
         return user
 
     def list_users(self):
-        query=get_session().query(db_models.User)
+        users = dict()
+        query = get_session().query(db_models.db_User)
         try:
             users = query.all()
-        except Exception ,e:
-            print("query error"+e.message)
+        except exc.NoResultFound:
+            logger.error("query all user occur error ...")
         return users
 
     def update_user(self, user):
@@ -59,3 +67,7 @@ class Connection(object):
 
     def delete_user(self, user):
         pass
+
+    def add_user(self, user):
+        pass
+

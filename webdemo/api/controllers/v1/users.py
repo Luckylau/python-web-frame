@@ -5,17 +5,20 @@ from pecan import rest
 from wsme import types as wtypes
 import logging
 from webdemo.api import expose
+from pecan import request
 logger = logging.getLogger(__name__)
 
 
-class User(wtypes.Base):
-    id = wtypes.text
+class Person(wtypes.Base):
+    user_id = wtypes.text
     name = wtypes.text
+    gender = wtypes.text
     age = int
+    email = wtypes.text
 
 
 class Users(wtypes.Base):
-    users = [User]
+    users = [Person]
 
 
 class UsersController(rest.RestController):
@@ -26,13 +29,15 @@ class UsersController(rest.RestController):
        test eg:
        curl -X POST http://localhost:8080/v1/users -H "Content-Type: application/json" -d '{"name": "Cook", "age": 50}' -v
     '''
-    @expose.expose(None, body=User, status_code=201)
+    @expose.expose(None, body=Person, status_code=201)
     def post(self, user):
-        print ("user:name,%s , age,%s" % (user.name, user.age))
+        print ("user:name,%s , age,%s" % (user.name, user.email))
 
     @expose.expose(Users)
     def get(self):
-        logger.info("v1 UsersController Get Method is called ...")
+        logger.info("Get all users Method is called ...")
+        """
+
         user_info_list = [
             {
                 'name': 'Alice',
@@ -44,6 +49,19 @@ class UsersController(rest.RestController):
             }
         ]
         users_list = [User(**user_info) for user_info in user_info_list]
+        """
+        db_conn = request.db_conn
+        users = db_conn.list_users()
+        if len(users) == 0:
+            return Users()
+        users_list = []
+        for user in users:
+            u = Person()
+            u.id = user.id
+            u.user_id = user.user_id
+            u.email = user.email
+            u.name = user.name
+            users_list.append(u)
         return Users(users=users_list)
 
     @pecan.expose()
@@ -54,27 +72,46 @@ class UsersController(rest.RestController):
 class UserController(rest.RestController):
 
     def __init__(self, user_id):
-        self.user_id = user_id
+        self.user_id = int(user_id)
 
     """
     test eg:
          http://127.0.0.1:8080/v1/users/abc
     """
-    @expose.expose(User)
+    @expose.expose(Person)
     def get(self):
-        logger.info("v1 UserController Get Method is called ...")
+        """
+         logger.info("v1 UserController Get Method is called ...")
         user_info = {
             'id': self.user_id,
             'name': 'Alice',
             'age': 30,
         }
-        return User(**user_info)
+        """
+        logger.info("user_id %s" % self.user_id)
+        db_conn = request.db_conn
+        user = db_conn.get_user(self.user_id)
+        if user is None:
+            logger.info("user by user_id is not found...")
+            return Person()
+        else:
+            logger.info(
+                "user by user_id is found ...%s %s %s " %
+                (user.user_id, user.name, user.email))
+            person = Person()
+            person.id = user.id
+            person.user_id = user.user_id
+            person.email = user.email
+            person.name = user.name
+            person.age=user.age
+            person.gender=user.gender
+            return person
 
     """
     test eg:
          curl -X PUT http://localhost:8080/v1/users/abc -H "Content-Type: application/json" -d '{"name": "Cook", "age":50}'
     """
-    @expose.expose(User, body=User)
+    @expose.expose(Person, body=Person)
     def put(self, user):
         logger.info("v1 UserController Put Method is called ...")
         user_info = {
@@ -82,7 +119,7 @@ class UserController(rest.RestController):
             'name': user.name,
             'age': user.age + 1
         }
-        return User(**user_info)
+        return Person(**user_info)
 
     """
     test eg:

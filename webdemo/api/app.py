@@ -1,6 +1,7 @@
 
 import pecan
 from webdemo.api import config as api_config
+from webdemo.api import hooks
 
 
 def get_pecan_config():
@@ -11,7 +12,9 @@ def get_pecan_config():
 def setup_app():
     config = get_pecan_config()
     app_conf = dict(config.app)
+    app_hooks=[hooks.DBHook()]
     app = pecan.make_app(app_conf.pop('root'),
                          logging=getattr(config, 'logging', {}),
+                         hooks=app_hooks,
                          **app_conf)
     return app
