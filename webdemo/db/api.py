@@ -63,14 +63,28 @@ class Connection(object):
         return users
 
     def update_user(self, user):
-        pass
+        logger.info("user.user_id: %s" % (user.user_id))
+        try:
+            session = get_session()
+            session.query(
+                db_models.db_User).filter_by(
+                user_id=user.user_id).update({"name":user.name,
+                                              "gender":user.gender,
+                                              "age":user.age,
+                                              "email":user.email
+            })
+            session.flush()
+            session.commit()
+        except exc.NoResultFound:
+            logger.error("query all user occur error ...")
 
+        return user
 
     def delete_user(self, user):
         pass
 
     def add_user(self, user):
-        logger.info( "user.user_id: %s" %(user.user_id))
+        logger.info("user.user_id: %s" % (user.user_id))
         db_user = db_models.db_User(
             user_id=user.user_id,
             email=user.email,
@@ -78,10 +92,9 @@ class Connection(object):
             name=user.name,
             age=user.age)
         try:
-            session=get_session()
+            session = get_session()
             session.add(db_user)
             session.flush()
             session.commit()
         except exc.NoResultFound:
             logger.error("add user occour error ...")
-

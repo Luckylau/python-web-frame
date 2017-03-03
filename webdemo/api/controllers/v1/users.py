@@ -58,8 +58,8 @@ class UsersController(rest.RestController):
         users_list = []
         for user in users:
             u = Person()
-            u.id = user.id
             u.user_id = user.user_id
+            u.age=user.age
             u.email = user.email
             u.name = user.name
             users_list.append(u)
@@ -110,17 +110,29 @@ class UserController(rest.RestController):
 
     """
     test eg:
-         curl -X PUT http://localhost:8080/v1/users/abc -H "Content-Type: application/json" -d '{"name": "Cook", "age":50}'
+         curl -X PUT http://localhost:8080/v1/users/12 -H "Content-Type: application/json" -d '{"user_id": "12","name": "Cook", "age":50}'
     """
     @expose.expose(Person, body=Person)
     def put(self, user):
         logger.info("v1 UserController Put Method is called ...")
-        user_info = {
-            'id': user.id,
+        """
+                user_info = {
+            'user_id': user.user_id,
             'name': user.name,
             'age': user.age + 1
         }
         return Person(**user_info)
+        """
+        db_conn = request.db_conn
+        user = db_conn.update_user(user)
+        person = Person()
+        person.user_id = user.user_id
+        person.email = user.email
+        person.name = user.name
+        person.age = user.age
+        person.gender = user.gender
+        return person
+
 
     """
     test eg:
