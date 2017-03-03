@@ -80,8 +80,17 @@ class Connection(object):
 
         return user
 
-    def delete_user(self, user):
-        pass
+    def delete_user(self, user_id):
+        logger.info("user.user_id: %s" % (user_id))
+        try:
+            session = get_session()
+            session.query(
+                db_models.db_User).filter_by(
+                user_id=user_id).delete()
+            session.flush()
+            session.commit()
+        except exc.NoResultFound:
+            logger.error("delete user occur error ...")
 
     def add_user(self, user):
         logger.info("user.user_id: %s" % (user.user_id))

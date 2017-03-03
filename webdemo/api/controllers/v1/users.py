@@ -143,3 +143,5 @@ class UserController(rest.RestController):
     def delete(self):
         logger.info("v1 UserController Delete Method is called ...")
         print('Delete user_id: %s' % self.user_id)
+        db_conn = request.db_conn
+        db_conn.delete_user(self.user_id)
