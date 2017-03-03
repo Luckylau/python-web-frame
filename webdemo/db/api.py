@@ -65,9 +65,23 @@ class Connection(object):
     def update_user(self, user):
         pass
 
+
     def delete_user(self, user):
         pass
 
     def add_user(self, user):
-        pass
+        logger.info( "user.user_id: %s" %(user.user_id))
+        db_user = db_models.db_User(
+            user_id=user.user_id,
+            email=user.email,
+            gender=user.gender,
+            name=user.name,
+            age=user.age)
+        try:
+            session=get_session()
+            session.add(db_user)
+            session.flush()
+            session.commit()
+        except exc.NoResultFound:
+            logger.error("add user occour error ...")
 

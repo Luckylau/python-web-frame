@@ -31,7 +31,8 @@ class UsersController(rest.RestController):
     '''
     @expose.expose(None, body=Person, status_code=201)
     def post(self, user):
-        print ("user:name,%s , age,%s" % (user.name, user.email))
+        db_conn = request.db_conn
+        db_conn.add_user(user)
 
     @expose.expose(Users)
     def get(self):
