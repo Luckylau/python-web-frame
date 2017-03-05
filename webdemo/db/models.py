@@ -26,6 +26,10 @@ class db_User(Base):
     age = Column(Integer, nullable=False)
     email = Column(String(255))
 
+    def __repr__(self):
+        return "<User(user_id='%s', name='%s', gender='%s',age='%s',email='%s')>" % (
+            self.user_id, self.name, self.gender, self.age, self.email)
+
     def __init__(self, user_id, name, gender, age, email):
         self.user_id = user_id
         self.name = name
