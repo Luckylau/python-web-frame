@@ -86,9 +86,10 @@ class Connection(object):
         logger.info("user.user_id: %s" % (user_id))
         try:
             session = get_session()
-            session.query(
+            user=session.query(
                 db_models.db_User).filter_by(
-                user_id=user_id).delete()
+                user_id=user_id).first()
+            session.delete(user)
             session.flush()
             session.commit()
         except exc.NoResultFound:

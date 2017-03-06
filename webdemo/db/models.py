@@ -31,7 +31,8 @@ class db_User(Base):
     telephone = relationship(
         "db_Telephone",
         order_by="db_Telephone.id",
-        back_populates="user")
+        back_populates="user" ,
+        cascade="save-update, merge, delete")
 
     def __repr__(self):
         return "<User(user_id='%s', name='%s', gender='%s',age='%s',email='%s')>" % (
