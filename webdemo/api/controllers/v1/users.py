@@ -15,6 +15,7 @@ class Person(wtypes.Base):
     gender = wtypes.text
     age = int
     email = wtypes.text
+    phone = wtypes.ArrayType(wtypes.text)
 
 
 class Users(wtypes.Base):
@@ -27,7 +28,8 @@ class UsersController(rest.RestController):
        None 表示这个方法没有返回值
        status_code 表示这个API的响应状态码是201
        test eg:
-       curl -X POST http://localhost:8080/v1/users -H "Content-Type: application/json" -d '{"name": "Cook", "age": 50}' -v
+       curl -X POST http://localhost:8080/v1/users -H "Content-Type: application/json" -d '{"phone": ["1000860","100876"], "age": 24, "user_id": "133", "name": "kile", "email": "111@163.com"}' -v
+
     '''
     @expose.expose(None, body=Person, status_code=201)
     def post(self, user):
@@ -62,6 +64,14 @@ class UsersController(rest.RestController):
             u.age = user.age
             u.email = user.email
             u.name = user.name
+            phones = []
+            for tel in user.telephone:
+                logger.info(
+                    "user.id %s ... tel.user_id %s" %
+                    (user.id, tel.user_id))
+                if user.id == tel.user_id:
+                    phones.append(tel.telnumber)
+            u.phone = phones
             users_list.append(u)
         return Users(users=users_list)
 
@@ -106,6 +116,10 @@ class UserController(rest.RestController):
             person.name = user.name
             person.age = user.age
             person.gender = user.gender
+            phones = []
+            for tel in user.telephone:
+                phones.append(tel.telnumber)
+            person.phone = phones
             return person
 
     """
@@ -124,13 +138,7 @@ class UserController(rest.RestController):
         return Person(**user_info)
         """
         db_conn = request.db_conn
-        user = db_conn.update_user(user)
-        person = Person()
-        person.user_id = user.user_id
-        person.email = user.email
-        person.name = user.name
-        person.age = user.age
-        person.gender = user.gender
+        person = db_conn.update_user(user)
         return person
 
     """

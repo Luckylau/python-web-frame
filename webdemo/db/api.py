@@ -80,7 +80,7 @@ class Connection(object):
         except exc.NoResultFound:
             logger.error("update user occur error ...")
 
-        return user
+        return user # if success ,return the modify information
 
     def delete_user(self, user_id):
         logger.info("user.user_id: %s" % (user_id))
@@ -95,13 +95,19 @@ class Connection(object):
             logger.error("delete user occur error ...")
 
     def add_user(self, user):
-        logger.info("user.user_id: %s" % (user.user_id))
+        logger.info("user.phone: %s" % (user.phone))
+        phones=[]
+        for i in user.phone:
+            db_phone=db_models.db_Telephone(telnumber=i)
+            phones.append(db_phone)
         db_user = db_models.db_User(
             user_id=user.user_id,
             email=user.email,
             gender=user.gender,
             name=user.name,
-            age=user.age)
+            age=user.age,
+            telephone=phones,
+        )
         try:
             session = get_session()
             session.add(db_user)
