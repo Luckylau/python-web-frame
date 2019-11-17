@@ -16,5 +16,6 @@ class v1Controller(rest.RestController):
     """
     @expose.expose(wtypes.text)
     def get(self):
-        logger.info("v1Controller Method Get is called ...")
+        logger.info("v1Controller Method Get is called ......")
+        logger.info("v1....")
         return "python-web-frame: pecan & wsme by v1Controller"
